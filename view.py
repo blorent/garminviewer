@@ -1,7 +1,11 @@
-from flask import render_template
+from flask import render_template, request
 from pandas_highcharts.core import serialize
 import pandas
 import model
+import gcplot
+import tempfile
+import logging
+import os
 
 def show_activities(activities, username):
 
@@ -46,10 +50,46 @@ def show_activities(activities, username):
 
 	return render_template('activities.html', data=l, username=username)
 
-def show_graph(data_series, data_to_plot, data_list, username):
+def import_code_from_string(code, name, add_to_sys_modules=0):
+	import sys,imp
+	module = imp.new_module(name)
+	exec code in module.__dict__
+	if add_to_sys_modules:
+		sys.modules[name] = module
+	return module
+
+
+def show_graph(activities, data_list, username):
+
+	# Get the field to draw from the form on the template
+	data_field = request.form.get('fields')
+	if data_field:
+		data_to_plot = str(data_field)
+	else:
+		data_to_plot = 'average_heart_rate_bpm'
 
 	# Filter results
-	data_series = data_series[int(data_series.average_heart_rate_bpm) > 125]
+	filters = {}#"average_heart_rate_bpm > 140", "average_heart_rate_bpm < 150"}
+	for filt in filters:
+
+		filter_code = \
+		"""
+def filter_func(series):
+	return series[series.""" + filt + """]
+		"""
+
+		# Test code beforehand
+		try:
+			compile(filter_code, os.path.join(tempfile.mkdtemp(), "bogus.py"), "exec")
+		except Exception as e:
+			logging.error("Error {} compiling {}".format(e, filter_code))
+			continue
+
+		filter_module = import_code_from_string(filter_code, "test")
+		activities = filter_module.filter_func(activities)
+
+	# Only keep the data we want to transfer to the template
+	data_series = activities[[data_to_plot]].dropna()
 
 	# Serialize and output to webpage
 	series = serialize(data_series, output_type='json', title=data_list[data_to_plot], kind="line", fontsize='12', grid=True, legend=False)

@@ -1,5 +1,5 @@
 import logging, os, model, view
-from flask import Flask, render_template, request
+from flask import Flask
 
 app = Flask(__name__)
 
@@ -20,15 +20,7 @@ def configure_logger():
 def graph(username):
 
 	activities = model.get_activities(os.path.join('cache', username))
-	data_field = request.form.get('fields')
-
-	# Get the data from the model
-	if data_field:
-		data_to_plot = str(data_field)
-	else:
-		data_to_plot = 'average_heart_rate_bpm'
-
-	return view.show_graph(model.get_data(activities, [data_to_plot]), data_to_plot, model.get_list_of_available_data(os.path.join('cache', username)), username)
+	return view.show_graph(activities, model.get_list_of_available_data(os.path.join('cache', username)), username)
 
 @app.route('/user/<username>/activities')
 def activities(username):
