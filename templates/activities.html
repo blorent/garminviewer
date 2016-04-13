@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Activities{% endblock %}
+{% block head %}
+  {{ super() }}
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+{% endblock %}
+{% block content %}
+	<h1>Activities</h1>
+	<table id="activities_table" cellspacing="0" cellpadding="0">
+    <thead>
+      <tr>
+        <th><span>Date</span></th>
+        <th><span>Nom</span></th>
+        <th><span>Distance</span></th>
+        <th><span>Max speed</span></th>
+        <th><span>Avg speed</span></th>
+        <th><span>Max HR</span></th>
+        <th><span>Avg HR</span></th>
+      </tr>
+    </thead>
+    <tbody>	
+      {% for act in data[::-1] %}
+	      <tr>
+	        <td class="lalign">{{ act.begin_timestamp.strftime("%d/%m/%Y") }}</td>
+	        <td><a href="https://connect.garmin.com/modern/activity/{{ act.activity_id }}">{{ act.activity_name.decode('utf-8') }}</a></td>
+          <td>{{ act.distance.decode('utf-8') }}</td>
+          <td>{{ act.max_speed }}</td>
+          <td>{{ act.average_speed.decode('utf-8') }}</td>
+	        <td>{{ act.max_heart_rate_bpm }}</td>
+          <td>{{ act.average_heart_rate_bpm }}</td>
+	      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+  	<script type="text/javascript">
+	$(function(){
+	  $('#keywords').tablesorter(); 
+	});
+	</script>
+{% endblock %}
