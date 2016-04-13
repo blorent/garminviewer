@@ -12,6 +12,7 @@
       <tr>
         <th><span>Date</span></th>
         <th><span>Nom</span></th>
+        <th><span>Description</span></th>
         <th><span>Distance</span></th>
         <th><span>Max speed</span></th>
         <th><span>Avg speed</span></th>
@@ -24,6 +25,7 @@
 	      <tr>
 	        <td class="lalign">{{ act.begin_timestamp.strftime("%d/%m/%Y") }}</td>
 	        <td><a href="https://connect.garmin.com/modern/activity/{{ act.activity_id }}">{{ act.activity_name.decode('utf-8') }}</a></td>
+          <td>{{ act.description.decode('utf-8') }}</td>
           <td>{{ act.distance.decode('utf-8') }}</td>
           <td>{{ act.max_speed }}</td>
           <td>{{ act.average_speed.decode('utf-8') }}</td>

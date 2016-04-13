@@ -18,6 +18,12 @@ def show_activities(activities, username):
 		else:
 			activities.loc[index, 'distance'] = row.distance.split(' ')[0] + ' km'
 
+		# We want 'Description' to be a string always
+		if "nan" in str(row.description):
+			activities.loc[index, 'description'] = "-"
+		else:
+			activities.loc[index, 'description'] = str(row.description)
+
 		# We want 'HR' to show as int without decimal, and ignore NaNs
 		if str(row.max_heart_rate_bpm) == "nan":
 			activities.loc[index, 'max_heart_rate_bpm'] = "-"
@@ -69,7 +75,7 @@ def show_graph(activities, data_list, username):
 		data_to_plot = 'average_heart_rate_bpm'
 
 	# Filter results
-	filters = {}#"average_heart_rate_bpm > 140", "average_heart_rate_bpm < 150"}
+	filters = {"average_heart_rate_bpm > 140", "average_heart_rate_bpm < 200"}
 	for filt in filters:
 
 		filter_code = \
@@ -90,6 +96,11 @@ def filter_func(series):
 
 	# Only keep the data we want to transfer to the template
 	data_series = activities[[data_to_plot]].dropna()
+
+	# Set human readable names
+	data_series.index.name = "Date"
+	for serie_name in data_series:
+		data_series = data_series.rename(columns={serie_name: gcplot.get_human_readable_name(serie_name)})
 
 	# Serialize and output to webpage
 	series = serialize(data_series, output_type='json', title=data_list[data_to_plot], kind="line", fontsize='12', grid=True, legend=False)
