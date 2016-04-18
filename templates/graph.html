@@ -12,9 +12,13 @@
 	
 	<form action="{{ url_for('graph', username=username) }}" method="POST">
 		<select name="fields" id="fields">
-		{% for key in options %}
-		<option value="{{ key }}" {% if key == current_data %} selected {% endif %}>{{ options[key] }}</option>
-		{% endfor %}
+			{% for key in options %}
+			<option value="{{ key }}" {% if key == current_data %} selected {% endif %}>{{ options[key] }}</option>
+			{% endfor %}
+		</select>
+		<select name="type" id="type">
+			<option value="line">Line</option>
+			<option value="bar">Bar</option>
 		</select>
 		<button type="submit" hidden>Show</button>
 	</form>
@@ -26,7 +30,7 @@
 	});
 
 	$(function() {
-    $('#fields').change(function() {
+    $('#type').change(function() {
         this.form.submit();
     });
 });   
