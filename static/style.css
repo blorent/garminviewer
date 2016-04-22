@@ -18,13 +18,6 @@ body {
     padding-bottom: 10px;
 }
 
-#content form {
-    margin : 25px auto;
-    font-family : "Verdana", "Arial", sans-serif;
-    font-color : #FFF;
-    text-align : center;
-}
-
 #content a {
   text-decoration : none;
   color : #0074D9;
@@ -33,6 +26,31 @@ body {
 #content a:hover {
   border-bottom : 1px dotted #AAAAAA;
   color : #AAAAAA;
+}
+
+/* Graph page forms */
+#content form {
+    margin : 25px auto;
+    font-family : "Verdana", "Arial", sans-serif;
+    font-color : #FFF;
+    text-align : center;
+}
+
+.input_fields_wrap {
+  margin : 25px auto;
+  padding : 25px;
+}
+
+.filter_form  {
+  margin-top : 15px;
+}
+
+.filter_form  input,select {
+  margin-right : 15px;
+}
+
+.filter_form  input[type=text] {
+  width : 20px;
 }
 
 #footer {

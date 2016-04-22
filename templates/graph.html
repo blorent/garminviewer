@@ -8,31 +8,81 @@
 
 {% endblock %}
 {% block content %}
-	<h1>Graphs</h1>
+
+	<div id="activity_data">
+	<h1>Activity data</h1>
 	
-	<form action="{{ url_for('graph', username=username) }}" method="POST">
-		<select name="fields" id="fields">
-			{% for key in options %}
-			<option value="{{ key }}" {% if key == current_data %} selected {% endif %}>{{ options[key] }}</option>
-			{% endfor %}
-		</select>
-		<select name="type" id="type">
-			<option value="line">Line</option>
-			<option value="bar">Bar</option>
-		</select>
-		<button type="submit" hidden>Show</button>
-	</form>
+		<form action="{{ url_for('graph', username=username) }}" method="POST">
+			<select name="fields" id="fields">
+				{% for key in options %}
+				<option value="{{ key }}" {% if key == current_data %} selected {% endif %}>{{ options[key] }}</option>
+				{% endfor %}
+			</select>
+			<select name="plot_type" id="plot_type">
+				<option value="line" {% if current_plot_type == 'line' %} selected {% endif %}>Line</option>
+				<option value="bar" {% if current_plot_type == 'bar' %} selected {% endif %}>Bar</option>
+			</select>
 
-	<div id="{{ chart|safe }}" class='chart'></div>
-	<script type="text/javascript">
-	$(function () {
-	    $("#{{ chart|safe }}").highcharts({{ data|safe }});
-	});
+			<div class="input_fields_wrap">
+			    <button class="add_field_button">Add filters</button>
+			</div>
 
-	$(function() {
-    $('#type').change(function() {
-        this.form.submit();
-    });
-});   
-	</script>
+			<button type="submit" hidden>Show</button>
+		</form>
+
+		<div id="{{ chart|safe }}" class='chart'></div>
+		<script type="text/javascript">
+		$(document).ready(function() {
+		    var max_fields      = 10; //maximum input boxes allowed
+		    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+		    var add_button      = $(".add_field_button"); //Add button ID
+		    
+		    var x = 0; //initial text box count
+		    $(add_button).click(function(e){ //on add input button click
+		        e.preventDefault();
+		        if(x < max_fields){ //max input box allowed
+		            x++; //text box increment
+		            var new_input = '<div class="filter_form"><select name="filter_field[]">'
+					{% for key in options %}
+					new_input += '<option value="{{ key }}">{{ options[key] }}</option>'
+					{% endfor %}
+					new_input += '</select>'
+					new_input += '<select name="filter_comp[]">'
+					new_input += '<option value="equals">=</option>'
+					new_input += '<option value="smaller_than"><</option>'
+					new_input += '<option value="bigger_than">></option>'
+					new_input += '</select>'
+					new_input += '<input type=text name="filter_val[] size=4"></input>'
+					new_input += '<a href="#" class="remove_field">X</a></div>'
+		            $(wrapper).append(new_input);
+		        }
+		    });
+		    
+		    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+		        e.preventDefault(); $(this).parent('div').remove(); x--;
+		    })
+		});
+
+		$(function () {
+		    $("#{{ chart|safe }}").highcharts({{ highcharts_code|safe }});
+		});
+
+		$(function() {
+		    $('#fields').change(function() {
+		        this.form.submit();
+		    });
+		});
+
+		$(function() {
+		    $('#plot_type').change(function() {
+		        this.form.submit();
+		    });
+		}); 
+		</script>
+
+	</div>
+
+	<div id="computed_data">
+	<h1>Computed data</h1>
+	</div>
 {% endblock %}

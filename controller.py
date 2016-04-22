@@ -18,13 +18,7 @@ def configure_logger():
 # Controller calls View
 @app.route('/user/<username>/graph', methods=['GET', 'POST'])
 def graph(username):
-	return view.show_graph(os.path.join('cache', username), model.get_list_of_available_data(os.path.join('cache', username)), username)
-
-@app.route('/user/<username>/hist', methods=['GET', 'POST'])
-def hist(username):
-
-	histos_week, histos_month = model.compute_cumulated_distance(os.path.join('cache', username))
-	return view.show_bar(histos_month, model.get_list_of_available_data(os.path.join('cache', username)), username)
+	return view.show_stats(os.path.join('cache', username), model.get_list_of_activity_data(os.path.join('cache', username)), username)
 
 @app.route('/user/<username>/activities')
 def activities(username):
